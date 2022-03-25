@@ -1,0 +1,135 @@
+{% extends 'admin/dashboard.html' %}
+{% block content %}
+{% load static %}
+
+<!--Sweet alert-->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!--Search -->
+
+<div class="container">
+    <div class="row">
+        <div class="search-container">
+            <div class="col">
+                <form method="GET">
+                    {% csrf_token %}
+                    <input type="text" name="q" placeholder="Search">
+                    <button type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2>Manage <b>Author</b></h2>
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        swal({
+                            title: "Good job!",
+                            text: "{{ message }}",
+                            icon: "success",
+                        });
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Image</th>
+                    <th>Action</th>
+                </tr>
+                {% for aut in author_list %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ aut.name }}</td>
+                    <td>{{ aut.address }}</td>
+                    <td>{{ aut.email }}</td>
+                    <td><img src="{% if aut.image %}{{ aut.image.url }}{% endif %}" alt="No Image" style="width:40px;"></td>
+                    <td>
+                        <a href="{% url 'News:update-author' aut.id %}" class="edit">
+                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                        <a href="{% url 'News:delete-author' aut.id %}" class="delete">
+                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                    </td>
+                </tr>
+
+                {% endfor %}
+            </thead>
+        </table>
+
+        <!--Add pagination in Author-->
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span>Page{{ page_obj.number }} of {{ page_obj.number_pages }} </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next </a>
+
+                {% endif %}
+            </span>
+        </div>
+        <!--Add Author-->
+
+        <!-- Edit Author-->
+        <div id="editAuthorModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="..."
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+
+        <!--Delete Author-->
+        <div id="deleteAuthorModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="..."
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+
+    $('.edit').on('click', function (e) {
+        e.preventDefault()
+        var url = $(this).attr('href');
+        $.get(url, function (data) {
+            console.log(data)
+            $('#editAuthorModal').modal('show');
+            $('#editAuthorModal .modal-content').empty().append(data)
+        })
+    })
+
+    $('.delete').on('click', function (e) {
+        e.preventDefault()
+        var url = $(this).attr('href');
+        $.get(url, function (data) {
+            console.log(data)
+            $('#deleteAuthorModal').modal('show')
+            $('#deleteAuthorModal .modal-content').empty().append(data)
+        })
+    })
+</script>
+
+{% endblock scripts %}
