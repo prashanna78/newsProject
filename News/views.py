@@ -6,8 +6,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import JsonResponse
 
-from .models import Author, News, Category
-from .forms import AuthorForm, NewsForm, CategoryForm
+from .models import Author, News, Category, Comment
+from .forms import AuthorForm, NewsForm, CategoryForm, CommentForm
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 
 #creating the process
@@ -118,7 +118,7 @@ class NewList(ListView):
         query=self.request.GET.get('q')
 
         if query:
-            new_list=self.model.objects.filter(name__icontains=query)
+            new_list=self.model.objects.filter(title__icontains=query)
         else:
             new_list=queryset
         return new_list
@@ -184,6 +184,16 @@ class CategoryList(ListView):
 
     def get_template_names(self):
         return self.ajax_template_name
+
+    def get_queryset(self):
+        queryset=Category.objects.all()
+        query=self.request.GET.get('q')
+
+        if query:
+            category_list=self.model.objects.filter(title__icontains=query)
+        else:
+            category_list=queryset
+        return category_list
     
 class CategoryCreate(SuccessMessageMixin, CreateView):
     ajax_template_name='category/category_create_ajax.html'
@@ -238,3 +248,61 @@ class CategoryDelete(SuccessMessageMixin, DeleteView):
 
     def get_success_message(self, cleaned_data):
         return self.success_message % cleaned_data
+
+
+
+#comment
+
+class CommentList(ListView):
+    ajax_template_name='comment/comment_list_ajax.html'
+    context_object_name='comment_list'
+    model=Comment
+
+    def get_template_names(self):
+        return self.ajax_template_name
+
+    def get_queryset(self):
+        queryset=Comment.objects.all()
+        query=self.request.GET.get('q')
+
+        if query:
+            comment_list=self.model.objects.filter(name__icontains=query)
+        else:
+            comment_list=queryset
+        return comment_list
+
+
+class CommentCreate(SuccessMessageMixin,CreateView):
+    ajax_template_name='comment/comment_create_ajax.html'
+    form_class=CommentForm
+    success_message="Comment is added"
+    success_url=reverse_lazy("News:comment-create")
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_template_names(self):
+        return self.ajax_template_name
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % cleaned_data
+
+
+class CommentUpdate(SuccessMessageMixin, UpdateView):
+    ajax_template_name='comment/comment_update_ajax.html'
+    form_class=CommentForm
+    model=Comment
+    success_message="Comment is updated"
+    success_url=reverse_lazy("News:comment-update")
+    
+    def get_object(self, **kwargs):
+        id=self.kwargs.get('id')
+        return get_object_or_404(Comment, id=id)
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_template_names(self):
+        return self.ajax_template_name

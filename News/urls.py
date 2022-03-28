@@ -1,7 +1,7 @@
 from django.urls import path
-from News.views import (IndexView,AuthorList, AuthorUpdate, CategoryUpdate, DashboardView, AuthorCreate,
+from News.views import (CommentList,CommentCreate, CommentUpdate, IndexView,AuthorList, AuthorUpdate, CategoryUpdate, DashboardView, AuthorCreate,
 AuthorList,AuthorUpdate, AuthorDelete,NewsCreate,NewList, NewsUpdate, NewsDelete, CategoryCreate, 
-CategoryList,CategoryUpdate,CategoryDelete)
+CategoryList,CategoryUpdate,CategoryDelete,)
 
 
 app_name ='News' #implementing custom url
@@ -26,5 +26,10 @@ urlpatterns = [
     path('categoryList/', CategoryList.as_view(), name='category-list'),
     path('createCategory/', CategoryCreate.as_view(), name='create-category'),
     path('category/<int:id>/update/',CategoryUpdate.as_view(), name='update-category'),
-    path('category/<int:id>/delete/', CategoryDelete.as_view(), name='delete-category')
+    path('category/<int:id>/delete/', CategoryDelete.as_view(), name='delete-category'),
+
+    #comment
+    path('commentList/', CommentList.as_view(), name='comment-list'),
+    path('commentCreate/', CommentCreate.as_view(), name='comment-create'),
+    path('comment/<int:id>/update/', CommentUpdate.as_view(), name='comment-update')
 ]

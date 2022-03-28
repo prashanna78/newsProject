@@ -1,6 +1,8 @@
+from email.policy import default
 from django.db import models
 from django.urls import reverse
 #create your models here
+
 class Category(models.Model):
 	title = models.CharField(max_length=100)
 	category_image = models.ImageField(upload_to='category/image')
