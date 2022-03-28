@@ -1,10 +1,16 @@
-from django.shortcuts import redirect, get_object_or_404
+
+from codecs import utf_16_be_decode
+from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import *
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView,DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+
+from xhtml2pdf import pisa
+from django.contrib.staticfiles import finders
+
 
 from .models import Author, News, Category, Comment
 from .forms import AuthorForm, NewsForm, CategoryForm, CommentForm
@@ -26,6 +32,7 @@ class AuthorList(ListView):
     template_name='Author/author_list.html'
     success_url=reverse_lazy("News:list-author")
     paginate_by=2
+    
 
     def get_queryset(self):
         queryset=Author.objects.all()
