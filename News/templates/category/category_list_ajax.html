@@ -7,7 +7,7 @@
 <!--Search -->
 
 <div class="container">
-    <div class="row">
+    <div class="row" style="display: flex; justify-content:flex-end;">
         <div class="search-container">
             <div class="col">
                 <form method="GET">
@@ -52,7 +52,8 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ cat.title }}</td>
-                    <td><img src="{% if cat.category_image %}{{ cat.category_image.url }}{% endif %}" alt="No Image" style="width:50px;"></td>
+                    <td>
+                        <a href="{% if cat.image %}{{ cat.image.url }}{% endif %}" target="_blank"/> <img src="{% if cat.category_image %}{{ cat.category_image.url }}{% endif %}" alt="No Image" style="width:50px;"></td>
                     <td>
                         <a href="{% url 'News:update-category' cat.id %}" class="edit">
                             <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>

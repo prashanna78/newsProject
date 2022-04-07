@@ -66,7 +66,7 @@ body {
   line-height: 1.5;
   color: #858796;
   text-align: left;
-  background-color: #fff;
+  background-color: red;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -11274,6 +11274,7 @@ footer.sticky-footer {
 footer.sticky-footer .copyright {
   line-height: 1;
   font-size: 0.8rem;
+  
 }
 
 body.sidebar-toggled footer.sticky-footer {

@@ -1,5 +1,5 @@
 from django.urls import path
-from News.views import (CommentList,CommentCreate, CommentUpdate, IndexView,AuthorList, AuthorUpdate, CategoryUpdate, DashboardView, AuthorCreate,
+from News.views import (CommentList,CommentCreate, CommentUpdate, CommentDelete, IndexView,AuthorList, AuthorUpdate, CategoryUpdate, DashboardView, AuthorCreate,
 AuthorList,AuthorUpdate, AuthorDelete,NewsCreate,NewList, NewsUpdate, NewsDelete, CategoryCreate, 
 CategoryList,CategoryUpdate,CategoryDelete,)
 
@@ -31,5 +31,6 @@ urlpatterns = [
     #comment
     path('commentList/', CommentList.as_view(), name='comment-list'),
     path('commentCreate/', CommentCreate.as_view(), name='comment-create'),
-    path('comment/<int:id>/update/', CommentUpdate.as_view(), name='comment-update')
+    path('comment/<int:id>/update/', CommentUpdate.as_view(), name='comment-update'),
+    path ('comment/<int:id>/delete/', CommentDelete.as_view(), name = 'comment-delete'),
 ]

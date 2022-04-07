@@ -3,9 +3,9 @@
   position: relative;
   height: 10rem;
   width: 100%;
-  @include media-breakpoint-up(md) {
-    height: 20rem;
-  }
+  // @include media-breakpoint-up(md) {
+  //   height: 20rem;
+  // }
 }
 
 // Bar Chart
@@ -13,9 +13,9 @@
   position: relative;
   height: 10rem;
   width: 100%;
-  @include media-breakpoint-up(md) {
-    height: 20rem;
-  }
+  // @include media-breakpoint-up(md) {
+  //   height: 20rem;
+  // }
 }
 
 // Pie Chart
@@ -23,7 +23,7 @@
   position: relative;
   height: 15rem;
   width: 100%;
-  @include media-breakpoint-up(md) {
-    height: calc(20rem - 43px) !important;
-  }
+  // @include media-breakpoint-up(md) {
+  //   height: calc(20rem - 43px) !important;
+  // }
 }

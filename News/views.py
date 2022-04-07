@@ -1,5 +1,5 @@
 
-from codecs import utf_16_be_decode
+
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import *
 from django.urls import reverse_lazy
@@ -7,9 +7,10 @@ from django.views.generic.edit import CreateView, UpdateView,DeleteView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
+import datetime
+from rest_framework.permissions import IsAdminUser
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
-from xhtml2pdf import pisa
-from django.contrib.staticfiles import finders
 
 
 from .models import Author, News, Category, Comment
@@ -21,12 +22,18 @@ class DashboardView(TemplateView):
     template_name='admin/dashboard.html'
     success_url=reverse_lazy('News:dashboard')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_permission'] = True if self.request.user.has_perm('News.add_author') else False
+        return context
+
 class IndexView(TemplateView):
     template_name='admin/index.html'
     
 
 #author
-class AuthorList(ListView):
+class AuthorList(PermissionRequiredMixin, ListView):
+    permission_required = 'News.add_author'
     context_object_name='author_list'
     model=Author
     template_name='Author/author_list.html'
@@ -48,11 +55,13 @@ class AuthorList(ListView):
         return author_list
 
 
-class AuthorCreate(SuccessMessageMixin, CreateView):
+class AuthorCreate(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
     ajax_template_name='Author/author_create_ajax.html'
     form_class=AuthorForm
-    success_url=reverse_lazy("News:create-author")
+    success_url=reverse_lazy("News:list-author")
     success_message='Author information is created'
+    permission_required = ('News.add_author', 'change_author')
+
 
     def get_template_names(self):
         return self.ajax_template_name
@@ -67,6 +76,8 @@ class AuthorCreate(SuccessMessageMixin, CreateView):
 
     def get_success_message(self, cleaned_data):
         return self.success_message % cleaned_data
+        
+    
 
         
 
@@ -125,17 +136,18 @@ class NewList(ListView):
         query=self.request.GET.get('q')
 
         if query:
-            new_list=self.model.objects.filter(title__icontains=query)
-        else:
-            new_list=queryset
-        return new_list
+            queryset=queryset.filter(title__icontains=query)
+        return queryset
 
 
-class NewsCreate(SuccessMessageMixin, CreateView):
+class NewsCreate(SuccessMessageMixin,PermissionRequiredMixin,CreateView):
     template_name='news/new_create.html'
+    permission_required = 'news.add_news'
     form_class=NewsForm
     success_url=reverse_lazy("News:create-news")
     success_message='News is created'
+    
+    
 
     def form_valid(self, form):
         print(form.cleaned_data)
@@ -143,6 +155,10 @@ class NewsCreate(SuccessMessageMixin, CreateView):
 
     def get_success_message(self, cleaned_data):
         return self.success_message % cleaned_data
+
+    # def dispatch(self, request, *args, **kwargs):
+    #     if 'user' in 
+    #     return super().dispatch(request, *args, **kwargs)
 
 
 class NewsUpdate(SuccessMessageMixin, UpdateView):
@@ -301,7 +317,7 @@ class CommentUpdate(SuccessMessageMixin, UpdateView):
     form_class=CommentForm
     model=Comment
     success_message="Comment is updated"
-    success_url=reverse_lazy("News:comment-update")
+    success_url=reverse_lazy("News:comment-list")
     
     def get_object(self, **kwargs):
         id=self.kwargs.get('id')
@@ -313,3 +329,19 @@ class CommentUpdate(SuccessMessageMixin, UpdateView):
 
     def get_template_names(self):
         return self.ajax_template_name
+
+class CommentDelete(SuccessMessageMixin, DeleteView):
+    ajax_template_name='comment/comment_delete_ajax.html'
+    model=News
+    success_url=reverse_lazy("News:comment-list")
+    success_message="comment has been deleted"
+
+    def get_object(self, **kwargs):
+        id=self.kwargs.get('id')
+        return get_object_or_404(News, id=id)
+
+    def get_template_names(self):
+        return self.ajax_template_name
+
+    def get_success_message(self, cleaned_data):
+        return self.success_message % cleaned_data

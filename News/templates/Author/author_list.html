@@ -1,13 +1,15 @@
 {% extends 'admin/dashboard.html' %}
-{% block content %}
+
 {% load static %}
+{% block content %}
 
 <!--Sweet alert-->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <!--Search -->
+{% if request.user.is_author %}
 
 <div class="container">
-    <div class="row">
+    <div class="row" style = "display:flex; justify-content:flex-end;">
         <div class="search-container">
             <div class="col">
                 <form method="GET">
@@ -19,6 +21,11 @@
         </div>
     </div>
 </div>
+
+{% endif %}
+
+
+
 
 <div class="container">
     <div class="table-wrapper">
@@ -46,8 +53,9 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Address</th>
-                    <th>Email</th>
+                    <th>Email</th>  
                     <th>Image</th>
+                    <th>Date</th>
                     <th>Action</th>
                 </tr>
                 {% for aut in author_list %}
@@ -56,7 +64,11 @@
                     <td>{{ aut.name }}</td>
                     <td>{{ aut.address }}</td>
                     <td>{{ aut.email }}</td>
-                    <td><img src="{% if aut.image %}{{ aut.image.url }}{% endif %}" alt="No Image" style="width:40px;"></td>
+                    <td>{{ aut.date_created }}</td>
+                    <td>
+                        <a href="{% if aut.image %}{{ aut.image.url }}{% endif %}" target="_blank"/><img src="{% if aut.image %}{{ aut.image.url }}{% endif %}" alt="No Image" style="width: 50px;" >
+
+                    </td>
                     <td>
                         <a href="{% url 'News:update-author' aut.id %}" class="edit">
                             <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>

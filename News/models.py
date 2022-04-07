@@ -1,6 +1,7 @@
 from email.policy import default
 from django.db import models
 from django.urls import reverse
+from django.forms import forms
 #create your models here
 
 class Category(models.Model):
@@ -16,6 +17,7 @@ class Author(models.Model):
 	address = models.CharField(max_length=100)
 	email = models.EmailField()
 	image = models.ImageField(upload_to='author/images')
+	date  = models.DateTimeField()
 	date_created = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
@@ -29,11 +31,15 @@ class News(models.Model):
 	category=models.ForeignKey(Category, on_delete=models.CASCADE)
 	title=models.CharField(max_length=100)
 	image=models.ImageField(upload_to='news/imgs')
+	date = models.DateTimeField()
 	details=models.TextField()
 	date_created=models.DateTimeField(auto_now_add=True)
+	
 
 	def __str__(self):
 		return "{} -> {}".format(self.category, self.title)
+
+	
 
 
 class Comment(models.Model):

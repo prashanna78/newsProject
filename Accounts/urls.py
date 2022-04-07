@@ -6,8 +6,8 @@ app_name = "Accounts"
 
 urlpatterns = [
 	path('', RegisterView.as_view(), name='register'),
-	path('loginPage/', LoginView.as_view(), name='login'),
-	path('logoutPage/', LogoutView.as_view(), name='logout'),
+	path('login/', LoginView.as_view(), name='login'),
+	path('logout/', LogoutView.as_view(), name='logout'),
 	path('homePage/', HomeView.as_view(), name='home'),
 	path('passwordReset/',PasswordReset.as_view(), name='reset')
 ]

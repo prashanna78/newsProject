@@ -1,11 +1,13 @@
 from django.views.generic import *
 from django.views import View
-from .forms import RegisterForm, LoginForm
+from .forms import LoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 from django.http import JsonResponse
 
@@ -15,23 +17,39 @@ class HomeView(TemplateView):
 	success_url =reverse_lazy("Accounts:home")
 
 #register 
-class RegisterView(SuccessMessageMixin,CreateView):
-	template_name = 'register/register.html'
-	form_class = RegisterForm
-	success_url = reverse_lazy('Accounts:register')
-	success_message = "Your Information is Created"
+class RegisterView(SuccessMessageMixin,TemplateView):
+    template_name = 'register/register.html'
+    success_url = reverse_lazy("Accounts:register")
+    success_message = 'User information is created'
 
-	def form_valid(self, form):
-		print(form.cleaned_data)
-		return super().form_valid(form)
+    #using post to validate the form of the user
+    def post(self,request, *args, **kwargs):
+        if request.method == "POST":
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            username = request.POST['username']
+            email = request.POST['email']
+            password1 = request.POST['password1']
+            password2 = request.POST['password2']
 
-	def form_invalid(self, form):
-		errors=form.errors.as_json()
-		return JsonResponse({'errors':errors},status=400)
+            if password1 == password2:
+                if User.objects.filter(username=username).exists():
+                    messages.info(request,'Username is taken. Choose Another')
+                    return redirect('Accounts:register')
+                elif User.objects.filter(email=email).exists():
+                    messages.info(request,'Email already exits')
+                    return redirect('Accounts:register')
+                else:
+                    user = User.objects.create_user(username = username, password = password1,first_name = first_name,
+                    last_name = last_name, email = email)
+                    user.save()
+                    messages.success(request, self.success_message)
+            else:
+                messages.info(request, 'enter correct password')
 
-	def get_success_message(self, cleaned_data):
-		return self.success_message % cleaned_data
+        return redirect(self.success_url)
 
+    
 #for login
 class LoginView(FormView):
 	template_name='registration/login.html'

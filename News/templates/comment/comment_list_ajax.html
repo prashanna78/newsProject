@@ -7,7 +7,7 @@
 <!--Search -->
 
 <div class="container">
-    <div class="row">
+    <div class="row" style="display: flex; justify-content:flex-end">
         <div class="search-container">
             <div class="col">
                 <form method="GET">
@@ -63,9 +63,9 @@
                     <td>{{ co.status }}</td>
                     <td>
                         <a href="{% url 'News:comment-update' co.id %}" class="edit">
-                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                        <a href="" class="delete">
-                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                            <i class="fa fa-pencil" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                        <a href="{% url 'News:comment-delete' co.id %}" class="delete">
+                            <i class="fa fa-trash" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                     </td>
                 </tr>
                 {% endfor %}
